@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 // Routes
-app.use("/api", routes);
+app.use("/", routes);
 
 // Start Server
 connectDB().then(() => {
