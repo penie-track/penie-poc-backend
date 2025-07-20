@@ -5,9 +5,12 @@ import express from "express";
 import connectDB from "./config/db";
 import routes from "./routes";
 
-
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Importing models
+const User = require("../models/User");
+const Category = require("../models/Category");
 
 // Middleware
 app.use(express.json());
@@ -21,3 +24,26 @@ connectDB().then(() => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 });
+
+// Creating User
+
+run();
+
+async function run() {
+  try {
+    const user = await User.create({
+      email: "hello@gmail.com",
+      passwordHash: "hehehehe",
+    });
+    console.log("User Created");
+
+    await Category.create({
+      userId: user._id,
+      name: "Transport",
+      type: "expense",
+    });
+    console.log("Category attached");
+  } catch (err) {
+    console.log(err);
+  }
+}
