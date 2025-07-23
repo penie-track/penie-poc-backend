@@ -4,13 +4,11 @@ dotenv.config();
 import express from "express";
 import connectDB from "./config/db";
 import routes from "./routes";
-
+// Importing models
+import User from "./models/User";
+import Category from "./models/Category";
 const app = express();
 const PORT = process.env.PORT || 5000;
-
-// Importing models
-const User = require("../models/User");
-const Category = require("../models/Category");
 
 // Middleware
 app.use(express.json());
@@ -34,6 +32,7 @@ async function run() {
     const user = await User.create({
       email: "hello@gmail.com",
       passwordHash: "hehehehe",
+      name: "Saleh",
     });
     console.log("User Created");
 
