@@ -19,9 +19,11 @@ const transactionSchema = new Schema<ITransaction>({
   note: { type: String },
   date: { type: Date },
   tags: [{ type: String }],
-  isRecurring: { type: Boolean },
+  isRecurring: { type: Boolean, default: false },
   categoryId: { type: Schema.Types.ObjectId, ref: "Category" },
-  createdAt: { type: Date },
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Trasaction = model<ITransaction>("Transaction", transactionSchema);
+
+export default Trasaction;
