@@ -4,6 +4,8 @@ dotenv.config();
 import express from "express";
 import connectDB from "./config/db";
 import routes from "./routes";
+import transactionRoutes from "./routes/transactionRoutes";
+
 // Importing models
 import User from "./models/User";
 import Category from "./models/Category";
@@ -15,6 +17,7 @@ app.use(express.json());
 
 // Routes
 app.use("/", routes);
+app.use("/api/transactions", transactionRoutes);
 
 // Start Server
 connectDB().then(() => {
@@ -25,7 +28,7 @@ connectDB().then(() => {
 
 // Creating User
 
-run();
+//run();
 
 async function run() {
   try {
