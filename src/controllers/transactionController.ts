@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Transaction from "../models/Transaction";
+import { checkMissingFields } from "../utils/checkMissingFields";
 import {
   CreateTransactionRequest,
   DeleteTransactionRequest,
@@ -11,6 +12,13 @@ export const createTransaction = async (
   req: Request<{}, {}, CreateTransactionRequest["body"]>,
   res: Response
 ) => {
+  // Check missing fields
+  const missing = checkMissingFields(["type", "category", "amount"], req.body);
+  if (missing.length > 0) {
+    return res
+      .status(400)
+      .json({ message: `Missing required fields: ${missing.join(", ")}` });
+  }
   try {
     const newTransaction = new Transaction(req.body);
     const saved = await newTransaction.save();
