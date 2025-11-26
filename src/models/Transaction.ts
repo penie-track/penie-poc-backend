@@ -23,6 +23,14 @@ const transactionSchema = new Schema<ITransaction>(
   { timestamps: true }
 );
 
+transactionSchema.set("toJSON", {
+  transform: (document, returnedObj: any) => {
+    returnedObj.id = returnedObj._id.toString();
+    delete returnedObj._id;
+    delete returnedObj.__v;
+  },
+});
+
 export const TransactionModel = mongoose.model<ITransaction>(
   "Transaction",
   transactionSchema

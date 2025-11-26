@@ -1,40 +1,76 @@
+import { TransactionDTO } from "../apiDefination";
+import {
+  createTransaction,
+  deleteTransaction,
+  getTransactionById,
+  getTransactions,
+  updateTransaction,
+} from "../services/transaction";
 import { Request, Response } from "express";
-import { TransactionModel } from "../models/Transaction";
 
-export const addTransaction = async (req: Request, res: Response) => {
+export const createTransactionController = async (
+  req: Request<{}, {}, TransactionDTO>,
+  res: Response
+) => {
   try {
-    const { type, category, amount, description, date } = req.body;
-
-    if (!type || !category || !amount || !description || !date) {
-      return res.status(400).json({ error: "All fields are required." });
-    }
-
-    const newTransaction = await TransactionModel.create({
-      type,
-      category,
-      amount,
-      description,
-      date,
-    });
-
-    return res.status(201).json(newTransaction);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to add transaction" });
+    const transaction = await createTransaction(req.body);
+    res.status(201).json(transaction);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };
 
-export const getAllTransactions = async (req: Request, res: Response) => {
+export const getTransactionsController = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    // You can also populate user/category details here if needed
-    const transactions = await TransactionModel.find();
-
-    res.status(200).json({
-      count: transactions.length,
-      data: transactions,
-    });
+    const transactions = await getTransactions();
+    res.json(transactions);
   } catch (error: any) {
-    console.error("Error fetching transactions:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getTransactionController = async (req: Request, res: Response) => {
+  try {
+    const transaction = await getTransactionById(req.params.id);
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    } else {
+      res.json(transaction);
+    }
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateTransactionController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const updatedTransaction = await updateTransaction(req.params.id, req.body);
+
+    if (!updatedTransaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    // Just use _id, no need for toObject or getters
+    res.json(updatedTransaction);
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteTransactionController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    await deleteTransaction(req.params.id);
+    res.json({ message: "Transaction deleted" });
+  } catch (error: any) {
+    res.status(400).json({ message: error.message });
   }
 };
