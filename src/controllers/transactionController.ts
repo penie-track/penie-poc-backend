@@ -6,17 +6,18 @@ import {
   getTransactions,
   updateTransaction,
 } from "../services/transaction";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 export const createTransactionController = async (
   req: Request<{}, {}, TransactionDTO>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   try {
     const transaction = await createTransaction(req.body);
     res.status(201).json(transaction);
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 
@@ -32,7 +33,11 @@ export const getTransactionsController = async (
   }
 };
 
-export const getTransactionController = async (req: Request, res: Response) => {
+export const getTransactionController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const transaction = await getTransactionById(req.params.id);
     if (!transaction) {
@@ -41,7 +46,7 @@ export const getTransactionController = async (req: Request, res: Response) => {
       res.json(transaction);
     }
   } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    next(error);
   }
 };
 
